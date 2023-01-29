@@ -5,6 +5,15 @@ type UseStockDataHook = (
   ticker: string
 ) => [boolean, string, any];
 
+type IStockPoint = {
+  Date: string;
+  High: string;
+  Low: string;
+  "Close/Last": string;
+  Volume: string;
+  Open: string;
+}
+
 export const useStockData: UseStockDataHook = (ticker) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -15,7 +24,10 @@ export const useStockData: UseStockDataHook = (ticker) => {
     repository
     .getStockData(ticker)
     .then((data: any) => {
-      setData(data.data);
+      const stockData = data.data.sort((a: IStockPoint, b: IStockPoint) => new Date(a.Date) > new Date(b.Date)).map((dataPoint: IStockPoint) => {
+        return {x: new Date(dataPoint.Date), y: [dataPoint.Open, dataPoint.High, dataPoint.Low, dataPoint["Close/Last"]]}
+      })
+      setData(stockData);
     })
     .catch((error) => {
       setError(error);
