@@ -1,15 +1,10 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from "react-router-dom";
-import Root from "./views/Root";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import AnalysisHome from "./views/AnalysisPage/AnalysisHome";
+import StockAnalysis from "./views/AnalysisPage/StockAnalysis";
 import Error from "./views/Error";
-import HomePage from "./views/HomePage/HomePage";
-import AnalysisPage from "./views/AnalysisPage/AnalysisPage";
+import Root from "./views/Root";
 import UserPage from "./views/User/UserPage";
 
 const container = document.getElementById("app");
@@ -22,8 +17,14 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
-        path: "analysis",
-        element: <AnalysisPage />,
+        path: "analysis/",
+        element: <AnalysisHome />,
+        children: [
+          {
+            path: ":id",
+            element: <StockAnalysis />,
+          },
+        ],
       },
       {
         path: "user",

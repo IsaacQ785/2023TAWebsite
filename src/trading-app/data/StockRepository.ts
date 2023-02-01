@@ -10,4 +10,14 @@ export class StockRepository implements IStockRepository {
         throw Error(err);
       });
   }
+
+  async getStockTickers() {
+    return fetch("http://localhost:8088/tickers")
+      .then((response: any) => {
+        return response.json();
+      })
+      .catch((err) => {
+        throw Error(err);
+      });
+  }
 }

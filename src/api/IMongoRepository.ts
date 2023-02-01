@@ -1,5 +1,6 @@
 import { Response } from "express";
 
 export interface IMongoRepository {
-  getStockData(id: string, res: Response): Promise<any> ;
+  getStockData(id: string, res: Response): Promise<any>;
+  getStockTickers(): Promise<any>;
 }
