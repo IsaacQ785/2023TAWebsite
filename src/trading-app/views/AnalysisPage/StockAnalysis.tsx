@@ -91,14 +91,14 @@ const StockAnalysis = () => {
               </YAxis>
 
               <RangeSelector>
-                <RangeSelector.Button count={1} type="day">
-                  1d
-                </RangeSelector.Button>
-                <RangeSelector.Button count={7} type="day">
-                  7d
+                <RangeSelector.Button count={1} type="week">
+                  1w
                 </RangeSelector.Button>
                 <RangeSelector.Button count={1} type="month">
                   1m
+                </RangeSelector.Button>
+                <RangeSelector.Button count={1} type="year">
+                  1y
                 </RangeSelector.Button>
                 <RangeSelector.Button type="all">All</RangeSelector.Button>
                 <RangeSelector.Input boxBorderColor="#7cb5ec" />
