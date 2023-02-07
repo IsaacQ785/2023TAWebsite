@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Autocomplete, TextField } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
@@ -9,11 +11,11 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useStockTickers } from "../views/AnalysisPage/useStockTickers";
 
 interface NavItem {
   route: string;
@@ -37,7 +39,9 @@ const navItems: NavItem[] = [
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [selectedStock, setSelectedStock] = useState<string>("");
+  const { loading, error, stockTickers } = useStockTickers();
+  const navigate = useNavigate();
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
@@ -62,6 +66,13 @@ const Header = () => {
     </Box>
   );
 
+  useEffect(() => {
+    if (selectedStock) navigate(`/analysis/${selectedStock}`);
+  }, [selectedStock]);
+
+  if (loading) return <div>Loading</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <Box sx={{ height: 64 }}>
       <CssBaseline />
@@ -79,11 +90,27 @@ const Header = () => {
           <Typography
             variant="h4"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{ flexGrow: 3, display: { xs: "none", sm: "block" } }}
           >
             Tradium
           </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+          <Autocomplete
+            getOptionLabel={(option: { name: string }) => option.name}
+            options={stockTickers}
+            value={{ name: selectedStock }}
+            onChange={(event, newValue) => {
+              setSelectedStock(newValue?.name || "");
+            }}
+            sx={{ flexGrow: 1 }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Navigate to stock here"
+                variant="standard"
+              />
+            )}
+          />
+          <Box sx={{ position: "relative" }}>
             {navItems.map((item) => (
               <Link key={item.name} to={item.route}>
                 <Button key={item.name} sx={{ color: "#fff" }}>
