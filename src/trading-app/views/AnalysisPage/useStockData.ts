@@ -1,42 +1,29 @@
 import { useEffect, useState } from "react";
 import { StockRepository } from "../../data/StockRepository";
+import { IStockDataPoint } from "./IStockDataPoint";
 
 type UseStockDataHook = (
   ticker: string
-) => [boolean, string, [number, number, number, number, number][]];
-
-type IStockPoint = {
-  Date: string;
-  High: number;
-  Low: number;
-  "Close/Last": number;
-  Volume: number;
-  Open: number;
-};
+) => [boolean, string, IStockDataPoint[]];
 
 export const useStockData: UseStockDataHook = (ticker) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
-  const [data, setData] = useState<[number, number, number, number, number][]>(
-    []
-  );
+  const [data, setData] = useState<IStockDataPoint[]>([]);
   const [repository] = useState(() => new StockRepository());
 
   useEffect(() => {
     repository
       .getStockData(ticker)
-      .then((data: any) => {
-        const stockData: [number, number, number, number, number][] = data.data
-          .sort(
-            (a: IStockPoint, b: IStockPoint) =>
-              new Date(a.Date) > new Date(b.Date)
-          )
-          .map((dataPoint: IStockPoint) => [
-            new Date(dataPoint.Date).getTime(),
-            Number(dataPoint.Open),
-            Number(dataPoint.High),
-            Number(dataPoint.Low),
-            Number(dataPoint["Close/Last"]),
+      .then((data) => {
+        const stockData: IStockDataPoint[] = data.data
+          .sort((a, b) => (a.date > b.date ? 1 : -1))
+          .map((dataPoint) => [
+            new Date(dataPoint.date).getTime(),
+            dataPoint.open,
+            dataPoint.high,
+            dataPoint.low,
+            dataPoint.close,
           ]);
         setData(stockData);
       })

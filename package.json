@@ -6,6 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --open",
     "start-server": "ts-node-dev src/api/server.ts",
+    "initialise-db": "ts-node src/api/database-tasks/tasks.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
@@ -23,8 +24,10 @@
     "@mui/material": "^5.11.3",
     "@mui/system": "^5.11.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "highcharts": "^10.3.3",
+    "highcharts-react-official": "^3.1.0",
     "mongodb": "^4.13.0",
     "mongoose": "^6.8.3",
     "nodemon": "^2.0.20",

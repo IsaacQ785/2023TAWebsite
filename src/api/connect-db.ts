@@ -5,6 +5,6 @@ let db: Db;
 export async function connectDB(){
     if (db) return db;
     let client = await MongoClient.connect(url);
-    db = client.db('Stock_Data');
+    db = client.db('Tradium');
     return db;
 }

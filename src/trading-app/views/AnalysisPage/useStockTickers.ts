@@ -4,14 +4,14 @@ import { StockRepository } from "../../data/StockRepository";
 export const useStockTickers = () => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [stockTickers, setStockTickers] = useState<any>([]);
+  const [stockTickers, setStockTickers] = useState<{ name: string }[]>([]);
   const [repository] = useState(() => new StockRepository());
 
   useEffect(() => {
     repository
       .getStockTickers()
       .then((response) => {
-        setStockTickers(response.data.cursor.firstBatch);
+        setStockTickers(response.data.map((name: string) => ({ name })));
       })
       .catch((error) => {
         setError(error);
