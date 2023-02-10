@@ -42,7 +42,10 @@ const insertData = async (data: IEODPoint[]) => {
   collection.insertMany(data);
 };
 
-const delayFetch = async (ticker: string, delay: number): Promise<IRawFormat> =>
+const delayFetch = async (
+  ticker: string,
+  delay: number
+): Promise<IRawFormat | { "Error Message": string }> =>
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(getTicker(ticker));
@@ -51,10 +54,20 @@ const delayFetch = async (ticker: string, delay: number): Promise<IRawFormat> =>
 
 const processRequest = async (ticker: string) => {
   try {
-    const raw_data = await delayFetch(ticker, 30000);
-    const processed_data = processStream(raw_data);
-    insertData(processed_data);
-    return "success";
+    const raw_data = await delayFetch(ticker, 15000);
+    if ("Error Message" in raw_data) {
+      if (raw_data["Error Message"].startsWith("Invalid API call")) {
+        console.log("ticker " + ticker + " does not exist, continuing routine");
+        console.log(raw_data["Error Message"]);
+        return "success";
+      }
+      console.log(raw_data["Error Message"]);
+      return "failure";
+    } else {
+      const processed_data = processStream(raw_data);
+      insertData(processed_data);
+      return "success";
+    }
   } catch (e) {
     console.log(e);
     return "failure";
@@ -71,7 +84,7 @@ const doTask = async () => {
         if (done === "success") return true;
         return false;
       } else {
-        console.log("already exists, no need to refetch");
+        console.log(ticker + " already exists, no need to refetch");
         return true;
       }
     });
@@ -82,7 +95,9 @@ const doTask = async () => {
   }
 };
 
-doTask().then(() => exit());
+// doTask().then(() => exit());
+
+// MAX SIZE REACHED
 
 // initialize(); // DONE
 // const cleanedData = processStream(raw_data); // DONE

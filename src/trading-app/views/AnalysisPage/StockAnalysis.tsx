@@ -1,35 +1,34 @@
-import { Autocomplete, Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import addHighchartsMore from "highcharts/highcharts-more";
 import Highcharts, { Options } from "highcharts/highstock";
 import addAllIndicators from "highcharts/indicators/indicators-all";
-import macd from "highcharts/indicators/macd";
-import { useState } from "react";
+import annotationsAdvanced from "highcharts/modules/annotations-advanced";
+import fullScreen from "highcharts/modules/full-screen";
+import priceIndicator from "highcharts/modules/price-indicator";
+import stockTools from "highcharts/modules/stock-tools";
 import { useParams } from "react-router-dom";
 import { useStockData } from "./useStockData";
+import "./StockAnalysis.scss";
+
+annotationsAdvanced(Highcharts);
+priceIndicator(Highcharts);
+fullScreen(Highcharts);
+stockTools(Highcharts);
 
 addHighchartsMore(Highcharts);
 addAllIndicators(Highcharts);
-macd(Highcharts);
+
 type StockAnalysisParams = {
   id: string;
 };
 
-type Function = {
-  name: string;
-  toggle: () => void;
-};
-
 const StockAnalysis = () => {
   const { id } = useParams() as unknown as StockAnalysisParams;
-  const [visibleBB, setVisibleBB] = useState(false);
-  const [visibleMA, setVisibleMA] = useState(false);
-
   const [loading, error, data] = useStockData(id);
-
   const options: Options = {
     chart: {
-      height: "55%",
+      height: "45%",
     },
     rangeSelector: {
       selected: 1,
@@ -48,7 +47,7 @@ const StockAnalysis = () => {
         title: {
           text: "OHLC",
         },
-        height: "50%",
+        height: "65%",
         lineWidth: 2,
         resize: {
           enabled: true,
@@ -62,21 +61,8 @@ const StockAnalysis = () => {
         title: {
           text: "Volume",
         },
-        top: "55%",
-        height: "25%",
-        offset: 0,
-        lineWidth: 2,
-      },
-      {
-        labels: {
-          align: "right",
-          x: -3,
-        },
-        title: {
-          text: "Indicators",
-        },
-        top: "85%",
-        height: "15%",
+        top: "70%",
+        height: "30%",
         offset: 0,
         lineWidth: 2,
       },
@@ -100,30 +86,6 @@ const StockAnalysis = () => {
         data: data.map((point) => [point[0], point[1]]),
         yAxis: 1,
       },
-      {
-        type: "sma",
-        linkedTo: id,
-        id: "overlay",
-        yAxis: 0,
-      },
-      {
-        type: "pc",
-        linkedTo: id,
-        id: "overlay",
-        yAxis: 0,
-      },
-      {
-        type: "macd",
-        linkedTo: id,
-        id: "oscillator",
-        yAxis: 2,
-      },
-      {
-        type: "rsi",
-        linkedTo: id,
-        id: "oscillator",
-        yAxis: 2,
-      },
     ],
   };
 
@@ -131,32 +93,13 @@ const StockAnalysis = () => {
   if (error) return <div>Error: {error.toString()}</div>;
 
   return (
-    <>
-      <Grid item xs={10} marginRight={5}>
-        <HighchartsReact
-          highcharts={Highcharts}
-          constructorType="stockChart"
-          options={options}
-        />
-      </Grid>
-      <Autocomplete
-        multiple
-        disablePortal
-        getOptionLabel={(option: Function) => option.name}
-        onChange={(event, newValue, reason, details) =>
-          details?.option?.toggle()
-        }
-        options={[]}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Pick tools to add for analysis
-            "
-            variant="standard"
-          />
-        )}
+    <Grid item xs={12} marginRight={5}>
+      <HighchartsReact
+        highcharts={Highcharts}
+        constructorType="stockChart"
+        options={options}
       />
-    </>
+    </Grid>
   );
 };
 

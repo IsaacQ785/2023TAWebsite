@@ -30,3 +30,5 @@ app.use(router);
 app.listen(PORT, function () {
   console.log(`listening on ${PORT}`);
 });
+
+export default router;
